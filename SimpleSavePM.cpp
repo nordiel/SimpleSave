@@ -5,298 +5,422 @@
 #include <vector> // library for poitnters and vectors
 #include <fstream> // library for file manipulation
 #include <windows.h> // windows os library 
+#include <sstream>
+#include <stdlib.h>
 
+// namespace standard
 using namespace std;
-int qstate;
 
 // functions
 
-void createUserFile(int a) {
+// function for file creation
+void createUserFile(unsigned int a) {
 
-    // creates the User File
-    ofstream file("users.txt");
 
-    // adds the user hash to the file
-    file << a;
-    
-    // if statements for User file creation
-    if (file.is_open()) {
+	// creates the User File
+	ofstream MyFile("users.txt", fstream::app);
 
-        cout << "User Created Succesfully!" << endl;
+	// adds the user hash to the file
+	MyFile << a << endl;
 
-    }
-    else if (!file.is_open()) {
+	// if statements for User file creation
+	if (MyFile.is_open()) {
 
-        cout << "Failed to create User" << endl;
+		cout << "User Created Succesfully!" << endl;
 
-    }
+	}
+	else if (!MyFile.is_open()) {
 
-    // closes the file
-    file.close();
+		cout << "Failed to create User" << endl;
+
+	}
+
+	// closes the file
+	MyFile.close();
 
 }
 
-void createHashFile(int a) {
+void createHashFile(unsigned int a) {
 
-    // creates the credentials file
-    ofstream file("credentials.txt");
+	/*string toString = to_string(a);*/
 
-    // write data to the file
-    file << a;
+	// creates the credentials file
+	ofstream MyFile("credentials.txt", fstream::app);
 
-    // if statements for password hash file creation
-    if (file.is_open()) {
+	// write data to the file
+	MyFile << a << endl;
 
-        cout << "Password saved Succesfully!" << endl;
+	// if statements for password hash file creation
+	if (MyFile.is_open()) {
 
-    }
-    else if (!file.is_open()) {
+		cout << "Password saved Succesfully!" << endl;
 
-        cout << "Failed to save password" << endl;
+	}
+	else if (!MyFile.is_open()) {
 
-    }
+		cout << "Failed to save password" << endl;
 
-    // close the file
-    file.close();
+	}
+
+	// close the file
+	MyFile.close();
 
 }
 
 // Hash Function
 unsigned int Hash(string& data) {
 
-    unsigned int result(0);
+	unsigned int result(0);
 
-    
-    // for characters in data
-    for (unsigned int ch : data) {
 
-        result = ch + (result << 4) + (result << 10) - result;
+	// for characters in data
+	for (unsigned int ch : data) {
 
-    }
+		result = ch + (result << 4) + (result << 10) - result;
 
-    return result;
+	}
+
+	return result;
 
 }
 
 // encrypt function 
 string encrypt(string a) {
 
-    // encrypt: abc : jkl
+	// encrypt: abc : jkl
 
-    for (int i = 0; i < a.size(); i++) {
+	for (int i = 0; i < a.size(); i++) {
 
-        a[i] = a[i] + 9;
+		a[i] = a[i] + 9;
 
-    }
+	}
 
-    return a;
+	return a;
 
 }
 
 // decrypt function
 string decrypt(string a) {
 
-    // decrypt: jkl : abc
+	// decrypt: jkl : abc
 
-    for (int i = 0; i < a.size(); i++) {
+	for (int i = 0; i < a.size(); i++) {
 
-        a[i] = a[i] - 9;
+		a[i] = a[i] - 9;
 
-    }
+	}
 
-    return a;
-
+	return a;
 
 }
 
 // Hash Validation 
-bool checkHash(int a, int b) {
+bool checkHash(string a, string b) {
 
-    return a == b;
+	return a == b;
+
+}
+
+void loggedInMenu(string a) {
+
+	int options;
+
+	cout << a << " Select from the options below" << endl;
+
+	cout << "1. Create Bundle" << endl;
+	cout << "2. Decrypt File" << endl;
+
+	cin >> options;
+
+	switch (options) {
+
+	case 1:
+
+		system("cls");
+
+		/*    createBundle();*/
+
+		break;
+
+	case 2:
+
+		system("cls");
+
+
+
+	}
 
 }
 
 // exit screen
 void exitScreen() {
 
-    system("cls");
+	system("cls");
 
-    cout << "Goodbye";
+	cout << "Goodbye";
 
 }
 
-// login menu
+// Login menu
 void loginMenu() {
 
+	string user;
+	string masterPass;
+	string userReader;
+	string credentialsReader;
+
+	cout << "Username: ";
+	cin >> user;
+
+	cout << "Password: ";
+	cin >> masterPass;
+
+	// Turn the username login into a hash
+	unsigned int userHash{ Hash(user) };
+
+	// Turn the Master Password login into a hash
+	unsigned int passHash{ Hash(masterPass) };
+
+	// Open usernames file
+	ifstream MyUsersFile("users.txt");
+
+	// Open credentials file
+	ifstream MyCredentialsFile("credentials.txt");
+
+	// change username hash to string
+	string userHashString = to_string(userHash);
+
+	// change password hash to string
+	string credentialsHashString = to_string(passHash);
+
+
+
+	// Check if the username entered by the user exists in the file
+	while (getline(MyUsersFile, userReader)) {
+
+		// function for hash comparison
+		checkHash(userHashString, userReader);
+
+		if (checkHash(userHashString, userReader) == true) {
+
+			cout << "User found in SimpleSave database" << endl;
+
+			break;
+
+		}
+		else if (checkHash(userHashString, userReader) == false) {
+
+			cout << "ERROR: CODE 801 USER NOT FOUND" << endl;
+
+			break;
+
+		}
+
+	}
+	MyUsersFile.close();
+
+	while (getline(MyCredentialsFile, credentialsReader)) {
+
+		checkHash(credentialsHashString, credentialsReader);
+
+		if (checkHash(credentialsHashString, credentialsReader) == true) {
+
+			cout << "Password matches from stored in SimpleSave database" << endl;
+
+			break;
+
+		}
+		else if (checkHash(credentialsHashString, credentialsReader) == false) {
+
+			cout << "ERROR: CODE 801 USER NOT FOUND" << endl;
+
+			break;
+
+		}
+
+	}
+	MyCredentialsFile.close();
+
+	if (checkHash(userHashString, userReader) == true && checkHash(credentialsHashString, credentialsReader) == true) {
+
+		system("cls");
+
+		cout << "Welcome " << user << "!" << "\n\n";
+
+		system("pause");
+		system("cls");
+		loggedInMenu(user);
+
+	}
 
 }
 
 //account creation menu
 void registerMenu() {
 
-    string user, master;
+	string user, master;
 
-    // username input
-    cout << "Username: ";
-    cin >> user;
+	// username input
+	cout << "Username: ";
+	cin >> user;
 
-    // username hash
-    unsigned int hashUser{ Hash(user) };
+	// username hash
+	unsigned int hashUser{ Hash(user) };
 
-    createUserFile(hashUser);
+	createUserFile(hashUser);
 
-    bool masterValid = false;
+	bool masterValid = false;
 
-    while (masterValid == false) {
+	while (masterValid == false) {
 
-        cout << "Master password: ";
-        cin >> master;
+		cout << "Master password: ";
+		cin >> master;
 
-        if (master.length() < 8) {
+		if (master.length() < 8) {
 
-            system("cls");
+			system("cls");
 
-            cout << "Passwords must be 8 characters or more" << "\n\n";
+			cout << "Passwords must be 8 characters or more" << "\n\n";
 
-        }
+		}
 
-        else if (master.length() >= 8) {
+		else if (master.length() >= 8) {
 
-            masterValid = true;
+			masterValid = true;
 
-        }
+		}
 
-    }
+	}
 
-    unsigned int hashMaster{ Hash(master) };
+	unsigned int hashMaster{ Hash(master) };
 
-    createHashFile(hashMaster);
+	createHashFile(hashMaster);
 
-    int select;
+	int select;
 
-    cout << "Login" << endl;
-    cout << "EXIT" << endl;
-    cin >> select;
+	cout << "Login" << endl;
+	cout << "EXIT" << endl;
+	cin >> select;
 
-    switch (select) {
+	switch (select) {
 
-    case 1:
+	case 1:
 
-        system("cls");
+		system("cls");
 
-        loginMenu();
+		loginMenu();
 
-        break;
+		break;
 
-    case 2:
+	case 2:
 
-        system("cls");
+		system("cls");
 
-        exitScreen();
+		exitScreen();
 
-    }
+	}
 
 }
 
 void getOneTimePass() {
 
-    int passLen;
-    bool validLen = false;
+	int passLen;
+	bool validLen = false;
 
-    while (validLen == false) {
+	while (validLen == false) {
 
-        cout << "Enter the length of the password: ";
-        cin >> passLen;
+		cout << "Enter the length of the password: ";
+		cin >> passLen;
 
-        if (passLen < 8 || passLen > 16) {
+		if (passLen < 8 || passLen > 16) {
 
-            system("cls");
+			system("cls");
 
-            cout << "Remember, the length should be above 8 characters but below 16." << "\n\n";
+			cout << "Remember, the length should be above 8 characters but below 16." << "\n\n";
 
-        }
+		}
 
-        else if (passLen >= 8) {
+		else if (passLen >= 8) {
 
-            validLen = true;
+			validLen = true;
 
-        }
+		}
 
-    }
+	}
 
-    const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\~\`\!\@\#\$\%\^\&\*\(\)\_\-\+\=\{\[\}\]\|\\\:\;\"\'\<\,\>\.\?\/";
-    const int charsLength = chars.length();
+	const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@";
+	const int charsLength = chars.length();
 
-    string randomPass = "";
+	string randomPass = "";
 
-    srand(time(nullptr));
+	srand(time(nullptr));
 
-    for (int i = 0; i <= passLen; i++) {
+	for (int i = 0; i <= passLen; i++) {
 
-        randomPass += chars[rand() % charsLength];
+		randomPass += chars[rand() % charsLength];
 
-    }
+	}
 
-    cout << "Your random password is: " << randomPass << endl;
-    system("pause");
+	//randomPass = getline(randomPass);
+
+	//clip::set_text(randomPass);
 
 }
 
 void mainMenu() {
 
-    int options;
+	int options;
 
-    cout << "1. Login" << endl;
-    cout << "2. New to SimpleSave?, create an account!" << endl;
-    cout << "3. Get Strong one time Password" << endl;
-    cout << "4. EXIT" << "\n\n";
-    cout << "Select: ";
+	cout << "1. Login" << endl;
+	cout << "2. New to SimpleSave?, create an account!" << endl;
+	cout << "3. Get Strong one time Password" << endl;
+	cout << "4. EXIT" << "\n\n";
+	cout << "Select: ";
 
-    cin >> options;
+	cin >> options;
 
-    switch (options) {
+	switch (options) {
 
-    case 1:
+	case 1:
 
-        system("cls");
+		system("cls");
 
-        loginMenu();
+		loginMenu();
 
-        break;
+		break;
 
-    case 2:
+	case 2:
 
-        system("cls");
+		system("cls");
 
-        registerMenu();
+		registerMenu();
 
-        break;
+		break;
 
-    case 3:
+	case 3:
 
-        system("cls");
+		system("cls");
 
-        getOneTimePass();
+		getOneTimePass();
 
-        break;
+		break;
 
 
-    case 4:
+	case 4:
 
-        system("cls");
+		system("cls");
 
-        exitScreen();
+		exitScreen();
 
-        break;
+		break;
 
-    }
+	}
 
 }
-
 
 // main function
 int main() {
 
-    mainMenu();
+	mainMenu();
 
 }
