@@ -1,9 +1,10 @@
 
-#include <iostream>
-#include <string>
-#include <cmath>
-#include <vector>
-#include <fstream>
+#include <iostream> // input output stream library
+#include <string> // library for string manipulation
+#include <cmath> // libary for math functions
+#include <vector> // library for poitnters and vectors
+#include <fstream> // library for file manipulation
+#include <windows.h> // windows os library 
 
 using namespace std;
 int qstate;
@@ -18,7 +19,7 @@ void createUserFile(int a) {
     // adds the user hash to the file
     file << a;
     
-    // if statements for User creation
+    // if statements for User file creation
     if (file.is_open()) {
 
         cout << "User Created Succesfully!" << endl;
@@ -37,8 +38,8 @@ void createUserFile(int a) {
 
 void createHashFile(int a) {
 
-    // create a files
-    ofstream file("users.txt");
+    // creates the credentials file
+    ofstream file("credentials.txt");
 
     // write data to the file
     file << a;
@@ -65,6 +66,8 @@ unsigned int Hash(string& data) {
 
     unsigned int result(0);
 
+    
+    // for characters in data
     for (unsigned int ch : data) {
 
         result = ch + (result << 4) + (result << 10) - result;
@@ -113,6 +116,7 @@ bool checkHash(int a, int b) {
 
 }
 
+// exit screen
 void exitScreen() {
 
     system("cls");
@@ -121,19 +125,22 @@ void exitScreen() {
 
 }
 
-
+// login menu
 void loginMenu() {
 
 
 }
 
+//account creation menu
 void registerMenu() {
 
     string user, master;
 
+    // username input
     cout << "Username: ";
     cin >> user;
 
+    // username hash
     unsigned int hashUser{ Hash(user) };
 
     createUserFile(hashUser);
@@ -201,11 +208,11 @@ void getOneTimePass() {
         cout << "Enter the length of the password: ";
         cin >> passLen;
 
-        if (passLen < 8) {
+        if (passLen < 8 || passLen > 16) {
 
             system("cls");
 
-            cout << "remember, the length should be above 8 characters." << "\n\n";
+            cout << "Remember, the length should be above 8 characters but below 16." << "\n\n";
 
         }
 
@@ -217,7 +224,7 @@ void getOneTimePass() {
 
     }
 
-    const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\~\`\!\@\#\$\%\^\&\*\(\)\_\-\+\=\{\[\}\]\|\\\:\;\"\'\<\,\>\.\?\/";
     const int charsLength = chars.length();
 
     string randomPass = "";
@@ -230,7 +237,8 @@ void getOneTimePass() {
 
     }
 
-    cout << "Your random password is: " << randomPass;
+    cout << "Your random password is: " << randomPass << endl;
+    system("pause");
 
 }
 
