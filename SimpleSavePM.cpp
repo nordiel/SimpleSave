@@ -4,66 +4,93 @@
 #include <cmath> // libary for math functions
 #include <vector> // library for poitnters and vectors
 #include <fstream> // library for file manipulation
-#include <windows.h> // windows os library 
 #include <sstream>
-#include <stdlib.h>
+#include <chrono> 
+#include <thread>
 
 // namespace standard
 using namespace std;
 
 // functions
 
-// function for file creation
-void createUserFile(unsigned int a) {
+void encryptFile(const string& inputFilename, const string& outputFilename, int encryptionKey) {
 
+	// Open the input file
+	ifstream inputFile(inputFilename);
 
-	// creates the User File
-	ofstream MyFile("users.txt", fstream::app);
+	if (!inputFile) {
 
-	// adds the user hash to the file
-	MyFile << a << endl;
+		cerr << "Error opening input file." << endl;
 
-	// if statements for User file creation
-	if (MyFile.is_open()) {
-
-		cout << "User Created Succesfully!" << endl;
-
-	}
-	else if (!MyFile.is_open()) {
-
-		cout << "Failed to create User" << endl;
-
+		return;
 	}
 
-	// closes the file
-	MyFile.close();
+	// Open the output file
+	ofstream outputFile(outputFilename);
 
+	if (!outputFile) {
+
+		cerr << "Error opening output file." << endl;
+
+		return;
+
+	}
+
+	// Encrypt the contents of the input file
+	char c;
+	while (inputFile.get(c)) {
+
+		c += encryptionKey; // Add the encryption key to the ASCII code of each character
+
+		outputFile.put(c); // Write the encrypted character to the output file
+
+	}
+
+	// Close the files
+	inputFile.close();
+	outputFile.close();
+
+	cout << "File encrypted successfully." << endl;
 }
 
-void createHashFile(unsigned int a) {
+void decryptFile(const string& inputFilename, const string& outputFilename, int encryptionKey) {
 
-	/*string toString = to_string(a);*/
+	// Open the input file
+	ifstream inputFile(inputFilename);
 
-	// creates the credentials file
-	ofstream MyFile("credentials.txt", fstream::app);
+	if (!inputFile) {
 
-	// write data to the file
-	MyFile << a << endl;
+		cerr << "Error opening input file." << endl;
 
-	// if statements for password hash file creation
-	if (MyFile.is_open()) {
-
-		cout << "Password saved Succesfully!" << endl;
-
-	}
-	else if (!MyFile.is_open()) {
-
-		cout << "Failed to save password" << endl;
+		return;
 
 	}
 
-	// close the file
-	MyFile.close();
+	// Open the output file
+	ofstream outputFile(outputFilename);
+
+	if (!outputFile) {
+
+		cerr << "Error opening output file." << endl;
+
+		return;
+	}
+
+	// Decrypt the contents of the input file
+	char c;
+
+	while (inputFile.get(c)) {
+
+		c -= encryptionKey; // Subtract the encryption key from the ASCII code of each character to decrypt it
+
+		outputFile.put(c); // Write the decrypted character to the output file
+	}
+
+	// Close the files
+	inputFile.close();
+	outputFile.close();
+
+	std::cout << "File decrypted successfully." << endl;
 
 }
 
@@ -84,33 +111,58 @@ unsigned int Hash(string& data) {
 
 }
 
-// encrypt function 
-string encrypt(string a) {
+// function for file creation
+void createUserFile(string a) {
 
-	// encrypt: abc : jkl
+	unsigned int hashUser{ Hash(a) };
 
-	for (int i = 0; i < a.size(); i++) {
+	// creates the User File
+	ofstream MyFile("users.txt", fstream::app);
 
-		a[i] = a[i] + 9;
+	// adds the user hash to the file
+	MyFile << hashUser << endl;
+
+	// if statements for User file creation
+	if (MyFile.is_open()) {
+
+		cout << "User Created Succesfully!" << endl;
+
+	}
+	else if (!MyFile.is_open()) {
+
+		cout << "Failed to create User" << endl;
 
 	}
 
-	return a;
+	// closes the file
+	MyFile.close();
 
 }
 
-// decrypt function
-string decrypt(string a) {
+void createHashFile(string a) {
 
-	// decrypt: jkl : abc
+	unsigned int hashCredentials{ Hash(a) };
 
-	for (int i = 0; i < a.size(); i++) {
+	// creates the credentials file
+	ofstream MyFile("credentials.txt", fstream::app);
 
-		a[i] = a[i] - 9;
+	// write data to the file
+	MyFile << hashCredentials << endl;
+
+	// if statements for password hash file creation
+	if (MyFile.is_open()) {
+
+		cout << "Password saved Succesfully!" << endl;
+
+	}
+	else if (!MyFile.is_open()) {
+
+		cout << "Failed to save password" << endl;
 
 	}
 
-	return a;
+	// close the file
+	MyFile.close();
 
 }
 
@@ -118,6 +170,73 @@ string decrypt(string a) {
 bool checkHash(string a, string b) {
 
 	return a == b;
+
+}
+
+void createBundle()
+{
+
+	bool BundleMenu = false;
+	int counter = 0;
+	string url, username, password;
+
+	// user states the apps for the bundle (maximum 5)
+
+	// Create Bundle File
+	ofstream MyFile("bundle.txt", fstream::app);
+
+	while(BundleMenu != true)
+	{
+
+
+		if (counter < 5)
+		{
+			
+			cout << "Enter URL: ";
+			cin >> url;
+
+			cout << "Enter the username: ";
+			cin >> username;
+
+			cout << "Enter the password: ";
+			cin >> password;
+
+
+			// Save data to the file
+			MyFile << url << "\n";
+			MyFile << username << endl;
+			MyFile << password << "\n\n";
+
+			// if statements for User file creation
+			if (MyFile.is_open()) {
+
+				cout << "Data Saved Succesfully!" << endl;
+				counter++;
+
+			}
+			else if (!MyFile.is_open()) {
+
+				cout << "ERROR: Failed to save data..." << endl;
+
+			}
+
+		}
+		else
+		{
+			// closes the file
+			MyFile.close();
+			BundleMenu = true;
+		}
+		
+
+
+
+		// user states his passwords for each app (gives url as well) 
+
+		// the tet file gets encrypted and the user is given an encryption key
+
+		// info gets added to a text file for user to download 
+	}
 
 }
 
@@ -130,6 +249,7 @@ void loggedInMenu(string a) {
 	cout << "1. Create Bundle" << endl;
 	cout << "2. Decrypt File" << endl;
 
+	cout << "Select: ";
 	cin >> options;
 
 	switch (options) {
@@ -138,7 +258,7 @@ void loggedInMenu(string a) {
 
 		system("cls");
 
-		/*    createBundle();*/
+		createBundle();
 
 		break;
 
@@ -146,13 +266,13 @@ void loggedInMenu(string a) {
 
 		system("cls");
 
-
+		break;
 
 	}
 
 }
 
-// exit screen
+// Exit screen
 void exitScreen() {
 
 	system("cls");
@@ -165,92 +285,80 @@ void exitScreen() {
 void loginMenu() {
 
 	string user;
-	string masterPass;
-	string userReader;
-	string credentialsReader;
+	string pass;
+	string userFileLines;
+	string credentialsFileLines;
 
 	cout << "Username: ";
 	cin >> user;
 
-	cout << "Password: ";
-	cin >> masterPass;
-
 	// Turn the username login into a hash
 	unsigned int userHash{ Hash(user) };
-
-	// Turn the Master Password login into a hash
-	unsigned int passHash{ Hash(masterPass) };
-
-	// Open usernames file
-	ifstream MyUsersFile("users.txt");
-
-	// Open credentials file
-	ifstream MyCredentialsFile("credentials.txt");
 
 	// change username hash to string
 	string userHashString = to_string(userHash);
 
-	// change password hash to string
+	// Check if the username entered by the user exists in the file
+	ifstream MyUsersFile("users.txt");
+
+	if (MyUsersFile.is_open()) {
+
+		while (getline(MyUsersFile, userFileLines)) {
+
+			if (userFileLines.find(userHashString) != string::npos ) {
+
+				cout << "User found in SimpleSave Database" << endl;
+
+				break;
+
+			}
+
+		}
+		MyUsersFile.close();
+	}
+	else {
+
+		cout << "Unable to open file" << endl;
+
+	}
+
+	cout << "Password: ";
+	cin >> pass;
+
+	// Turn the Master Password login into a hash
+	unsigned int passHash{ Hash(pass) };
+
 	string credentialsHashString = to_string(passHash);
 
+	ifstream MyCredentialsFile("credentials.txt");
+	
+	if (MyCredentialsFile.is_open()) {
 
+		while (getline(MyCredentialsFile, credentialsFileLines)) {
 
-	// Check if the username entered by the user exists in the file
-	while (getline(MyUsersFile, userReader)) {
+			if (credentialsFileLines.find(credentialsHashString) != string::npos ) {
 
-		// function for hash comparison
-		checkHash(userHashString, userReader);
+				cout << "Welcome " << user << endl;
 
-		if (checkHash(userHashString, userReader) == true) {
+				this_thread::sleep_for(chrono::milliseconds(3000));
 
-			cout << "User found in SimpleSave database" << endl;
+				system("cls");
 
-			break;
+				loggedInMenu(user);
 
-		}
-		else if (checkHash(userHashString, userReader) == false) {
-
-			cout << "ERROR: CODE 801 USER NOT FOUND" << endl;
-
-			break;
+			}
 
 		}
-
+		MyCredentialsFile.close();
 	}
-	MyUsersFile.close();
+	else if (getline(MyCredentialsFile, credentialsFileLines)) {
 
-	while (getline(MyCredentialsFile, credentialsReader)) {
-
-		checkHash(credentialsHashString, credentialsReader);
-
-		if (checkHash(credentialsHashString, credentialsReader) == true) {
-
-			cout << "Password matches from stored in SimpleSave database" << endl;
-
-			break;
-
-		}
-		else if (checkHash(credentialsHashString, credentialsReader) == false) {
-
-			cout << "ERROR: CODE 801 USER NOT FOUND" << endl;
-
-			break;
-
-		}
-
-	}
-	MyCredentialsFile.close();
-
-	if (checkHash(userHashString, userReader) == true && checkHash(credentialsHashString, credentialsReader) == true) {
-
-		system("cls");
-
-		cout << "Welcome " << user << "!" << "\n\n";
+		cout << "Oh oh... " << endl;
+		cout << "It seems you credentials do not match, try again." << endl;
 
 		system("pause");
-		system("cls");
-		loggedInMenu(user);
 
+		loginMenu();
 	}
 
 }
@@ -258,25 +366,22 @@ void loginMenu() {
 //account creation menu
 void registerMenu() {
 
-	string user, master;
+	string user, pass;
 
 	// username input
 	cout << "Username: ";
 	cin >> user;
 
-	// username hash
-	unsigned int hashUser{ Hash(user) };
-
-	createUserFile(hashUser);
+	createUserFile(user);
 
 	bool masterValid = false;
 
 	while (masterValid == false) {
 
-		cout << "Master password: ";
-		cin >> master;
+		cout << "Password: ";
+		cin >> pass;
 
-		if (master.length() < 8) {
+		if (pass.length() < 8) {
 
 			system("cls");
 
@@ -284,22 +389,21 @@ void registerMenu() {
 
 		}
 
-		else if (master.length() >= 8) {
+		else if (pass.length() >= 8) {
 
 			masterValid = true;
+
+			createHashFile(pass);
 
 		}
 
 	}
 
-	unsigned int hashMaster{ Hash(master) };
-
-	createHashFile(hashMaster);
-
 	int select;
 
-	cout << "Login" << endl;
-	cout << "EXIT" << endl;
+	cout << "1. Login" << endl;
+	cout << "2. EXIT" << endl;
+	cout << "\nSelect: ";
 	cin >> select;
 
 	switch (select) {
@@ -361,9 +465,9 @@ void getOneTimePass() {
 
 	}
 
-	//randomPass = getline(randomPass);
+	system("cls");
 
-	//clip::set_text(randomPass);
+	cout << "Your " << passLen << " character password is: " << randomPass;
 
 }
 
