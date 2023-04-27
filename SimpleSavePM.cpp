@@ -429,6 +429,7 @@ void loginMenu()
 
 		}
 		MyUsersFile.close();
+
 	}
 	else
 	{
@@ -455,6 +456,9 @@ void loginMenu()
 
 			if (credentialsFileLines.find(credentialsHashString) != string::npos)
 			{
+				cout << "Succesfully logged in as " << user << " !";
+
+				this_thread::sleep_for(chrono::milliseconds(4000));
 
 				system("cls");
 
@@ -522,7 +526,25 @@ void registerMenu()
 		{
 
 			masterValid = true;
+
 			createHashFile(pass);
+
+			cout << R"(
+
+			 _    _ _____ _     _____ ________  ___ _____ 
+			| |  | |  ___| |   /  __ \  _  |  \/  ||  ___|
+			| |  | | |__ | |   | /  \/ | | | .  . || |__  
+			| |/\| |  __|| |   | |   | | | | |\/| ||  __| 
+			\  /\  / |___| |___| \__/\ \_/ / |  | || |___ 
+			 \/  \/\____/\_____/\____/\___/\_|  |_/\____/ 
+
+)";
+
+			cout << "                        Succesfully joined SimpleSave as " << user << " !";
+
+			this_thread::sleep_for(chrono::milliseconds(4000));
+
+			system("cls");
 
 		}
 
