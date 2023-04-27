@@ -340,19 +340,19 @@ void loggedInMenu()
 	string options;
 
 	cout << R"(
-			  ____       _           _   
-			 / ___|  ___| | ___  ___| |_ 
-			 \___ \ / _ \ |/ _ \/ __| __|
-			  ___) |  __/ |  __/ (__| |_ 
-			 |____/ \___|_|\___|\___|\__|
+	 ____       _           _   
+	/ ___|  ___| | ___  ___| |_ 
+	\___ \ / _ \ |/ _ \/ __| __|
+     ___) |  __/ |  __/ (__| |_ 
+	|____/ \___|_|\___|\___|\__|
                        
 
 
 )";
 
-	printf("\t\t\t\x1B[31m[C]\033[0mreate Bundle");
-	printf("\t\t\x1B[31m[D]\033[0mecrypt");
-	printf("\t\t\x1B[31m[E]\033[0mxit\n\n");
+	printf("\t\x1B[31m[C]\033[0mreate Bundle");
+	printf("\t\x1B[31m[D]\033[0mecrypt");
+	printf("\t\x1B[31m[E]\033[0mxit\n\n");
 
 	cout << "Select an option: ";
 	cin >> options;
@@ -488,12 +488,14 @@ void registerMenu()
 
 	cout << R"(
 
-      ____            _     _              
-     |  _ \ ___  __ _(_)___| |_ ___ _ __    
-     | |_) / _ \/ _` | / __| __/ _ \ '__|   
-     |  _ <  __/ (_| | \__ \ ||  __/ |      
-     |_| \_\___|\__, |_|___/\__\___|_|      
-                |___/                       
+           _____ _                           
+		  / ____(_)                          
+		 | (___  _  __ _ _ __    _   _ _ __  
+		  \___ \| |/ _` | '_ \  | | | | '_ \ 
+		  ____) | | (_| | | | | | |_| | |_) |
+		 |_____/|_|\__, |_| |_|  \__,_| .__/ 
+					__/ |             | |    
+				   |___/              |_|                    
 
 )";
 
@@ -559,11 +561,11 @@ void registerMenu()
 			 \___ \| | '_ ` _ \| '_ \| |/ _ \ \___ \ / _` \ \ / / _ \
 			  ___) | | | | | | | |_) | |  __/  ___) | (_| |\ V /  __/
 			 |____/|_|_| |_| |_| .__/|_|\___| |____/ \__,_| \_/ \___|
-                                           |_|
+                               |_|
 
 )";
 
-	printf("\t\t\t\t\t\x1B[31m[L]\033[0mogin");
+	printf("\t\t\t\t\t\x1B[31m[S]\033[0mign up");
 	printf("\t\t\x1B[31m[E]\033[0mxit\n\n");
 
 	cout << "Select an option: ";
@@ -584,8 +586,78 @@ void registerMenu()
 
 }
 
+void getPassFile() 
+{
+
+	cout << R"(
+
+
+  _____                 _                   _____                                    _   ______ _ _      
+ |  __ \               | |                 |  __ \                                  | | |  ____(_) |     
+ | |__) |__ _ _ __   __| | ___  _ __ ___   | |__) |_ _ ___ _____      _____  _ __ __| | | |__   _| | ___ 
+ |  _  // _` | '_ \ / _` |/ _ \| '_ ` _ \  |  ___/ _` / __/ __\ \ /\ / / _ \| '__/ _` | |  __| | | |/ _ \
+ | | \ \ (_| | | | | (_| | (_) | | | | | | | |  | (_| \__ \__ \\ V  V / (_) | | | (_| | | |    | | |  __/
+ |_|  \_\__,_|_| |_|\__,_|\___/|_| |_| |_| |_|   \__,_|___/___/ \_/\_/ \___/|_|  \__,_| |_|    |_|_|\___|
+                                                                                                         
+
+
+)";
+	
+	const int passLen = 8;
+	const char chars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=/;,.\"\'\'\\";
+
+	int count;
+
+	cout << "Enter the amount of passwords: ";
+	cin >> count;
+
+	ofstream randomPasswordsFile("random_passwords.txt");
+
+	if (randomPasswordsFile.is_open())
+	{
+		for (int i = 0; i < count; i++)
+		{
+			string password = "";
+
+			for (int j = 0; j < passLen; j++)
+			{
+
+				int randomIndex = rand() % (sizeof(chars) - 1);
+
+				password += chars[randomIndex];
+			}
+			randomPasswordsFile << password << endl;
+		}
+		randomPasswordsFile.close();
+
+		cout << "Passwords saved as random_passwords.txt" << endl;
+
+	}
+	else
+	{
+
+		cout << "Unable to create RPF" << endl;
+
+	}
+
+}
+
 void getOneTimePass()
 {
+
+	cout << R"(
+
+
+   ____              ________ _                  _____                                    _ 
+  / __ \             |__   __(_)                |  __ \                                  | |
+ | |  | |_ __   ___     | |   _ _ __ ___   ___  | |__) |_ _ ___ _____      _____  _ __ __| |
+ | |  | | '_ \ / _ \    | |  | | '_ ` _ \ / _ \ |  ___/ _` / __/ __\ \ /\ / / _ \| '__/ _` |
+ | |__| | | | |  __/    | |  | | | | | | |  __/ | |  | (_| \__ \__ \\ V  V / (_) | | | (_| |
+  \____/|_| |_|\___|    |_|  |_|_| |_| |_|\___| |_|   \__,_|___/___/ \_/\_/ \___/|_|  \__,_|
+                                                                                          
+
+
+)";
 
 	int passLen;
 	bool validLen = false;
@@ -593,7 +665,7 @@ void getOneTimePass()
 	while (validLen == false)
 	{
 
-		cout << "Enter the length of the password: ";
+		cout << "Enter the length of the password: " << endl;
 		cin >> passLen;
 
 		// Checks if the user's chosen password length is above 8 but below 64
@@ -642,26 +714,26 @@ void mainMenu()
 
 	cout << R"(
 
-			  ____  _                 _        ____                  
-			 / ___|(_)_ __ ___  _ __ | | ___  / ___|  __ ___   _____ 
-			 \___ \| | '_ ` _ \| '_ \| |/ _ \ \___ \ / _` \ \ / / _ \
-			  ___) | | | | | | | |_) | |  __/  ___) | (_| |\ V /  __/
-			 |____/|_|_| |_| |_| .__/|_|\___| |____/ \__,_| \_/ \___|
-                                           |_|
+				  ____  _                 _        ____                  
+				 / ___|(_)_ __ ___  _ __ | | ___  / ___|  __ ___   _____ 
+				 \___ \| | '_ ` _ \| '_ \| |/ _ \ \___ \ / _` \ \ / / _ \
+				  ___) | | | | | | | |_) | |  __/  ___) | (_| |\ V /  __/
+				 |____/|_|_| |_| |_| .__/|_|\___| |____/ \__,_| \_/ \___|
+								   |_|
 
-	Welcome to SimpleSave a simple way to save your passwords in a secure environment!
+	              Welcome to SimpleSave, a simple way to save your passwords in a secure environment!
 
 )";
 
 	// Menu options with custom colors
 	printf("\t\t\x1B[31m[L]\033[0mogin");
-	printf("\t\t\x1B[31m[C]\033[0mreate Account");
-	printf("\t\x1B[31m[G]\033[0menerate OTP");
+	printf("\t\t\x1B[31m[S]\033[0mign up");
+	printf("\t\t\x1B[31m[G]\033[0menerate OTP");
+	printf("\t\t\x1B[31m[C]\033[0mreate RPF");
 	printf("\t\t\x1B[31m[E]\033[0mxit\n\n");
 
 	cout << "Select an option: ";
 	cin >> options;
-
 
 	if (options == "L" || options == "l")
 	{
@@ -670,7 +742,7 @@ void mainMenu()
 		loginMenu();
 
 	}
-	else if (options == "C" || options == "c")
+	else if (options == "S" || options == "s")
 	{
 		system("cls");
 
@@ -682,6 +754,14 @@ void mainMenu()
 		system("cls");
 
 		getOneTimePass();
+
+	}
+	else if (options == "C" || options == "c")
+	{
+
+		system("cls");
+
+		getPassFile();
 
 	}
 	else if (options == "E" || options == "e")
